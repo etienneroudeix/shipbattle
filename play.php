@@ -67,11 +67,11 @@ function connect(Client $client)
                 if (!$state['ships_ok']) {
                     echo "Please define your ships !" . PHP_EOL;
 
-                    defineShip(5);
-                    defineShip(4);
-                    defineShip(3);
-                    defineShip(3);
-                    defineShip(2);
+                    defineShip($state['ships'], 5);
+                    defineShip($state['ships'], 4);
+                    defineShip($state['ships'], 3);
+                    defineShip($state['ships'], 3);
+                    defineShip($state['ships'], 2);
 
                     $state['ships_ok'] = true;
                 }
@@ -89,9 +89,49 @@ function connect(Client $client)
         );
 }
 
-function defineShip($length)
+function defineShip(array &$state, $length)
 {
-    // TODO
+    echo "Place your $length long ship" . PHP_EOL;
+
+    GET_START_X:
+    $sx = readline("Git column for ship start position [A-H] : ");
+    if (!strlen($sx)===1 || !in_array($sx, range('A', 'H'))) goto GET_START_X;
+
+    GET_START_Y:
+    $sy = readline("Git raw for ship start position [0-7] : ");
+    if (!strlen($sy)===1 || !in_array($sy, range(0, 7))) goto GET_START_Y;
+
+    GET_END_X:
+    $ex = readline("Git column for ship start position [A-H] : ");
+    if (!strlen($ex)===1 || !in_array($ex, range('A', 'H'))) goto GET_END_X;
+
+    GET_END_Y:
+    $ey = readline("Git raw for ship start position [0-7] : ");
+    if (!strlen($ey)===1 || !in_array($ey, range(0, 7))) goto GET_END_Y;
+
+    // check axis
+    if ($sx !== $ex && $sy !== $ey) {
+        echo "Bad position" . PHP_EOL;
+        goto GET_START_X;
+    }
+
+    // check length
+    if ($sx === $ex) {
+        if (abs($sy-$ey) !== $length-1) {
+            echo "Bad length" . PHP_EOL;
+            goto GET_START_X;
+        }
+    }
+    if ($sy === $ey) {
+        if (abs($sx-$ex) !== $length-1) {
+            echo "Bad length" . PHP_EOL;
+            goto GET_START_X;
+        }
+    }
+
+    echo "Nice ship !" . PHP_EOL;
+
+    // todo save in $state
 }
 
 $loop->run();
