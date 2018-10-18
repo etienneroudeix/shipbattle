@@ -5,11 +5,9 @@ use Rx\Scheduler\EventLoopScheduler;
 
 require __DIR__ . "/vendor/autoload.php";
 
-const RESULTS = [
-    "touched" => 'TOUCHED',
-    "sinked" => 'SINKED',
-    "plouf" => 'PLOUF'
-];
+const TOUCHED = 'TOUCHED';
+const SINKED = 'SINKED';
+const PLOUF = 'PLOUF';
 
 $loop = EventLoop::getLoop();
 $scheduler = new EventLoopScheduler($loop);
