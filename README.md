@@ -50,8 +50,8 @@ The game prompts the winner and exits.
 
 ## Afterward
 
-[] increase board size
+- [ ] increase board size
 
-[] share ocean
+ [ ] share ocean
 
-[] improve player number
+- [ ] improve player number
