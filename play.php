@@ -77,11 +77,11 @@ function connect(Client $client)
                 if (!$state['ships_ok']) {
                     echo "Please define your ships !" . PHP_EOL;
 
-                    defineShip(5, 'A', 1);
-                    defineShip(4, 'B', 3);
-                    defineShip(3, 'E', 5);
-                    defineShip(3, 'H', 2);
-                    defineShip(2, 'C', 1);
+                    defineShip(5, 'A');
+                    defineShip(4, 'B', 'y');
+                    defineShip(3, 'E');
+                    defineShip(3, 'H', 'y');
+                    defineShip(2, 'C');
 
                     $state['ships_ok'] = true;
                 }
@@ -99,20 +99,34 @@ function connect(Client $client)
         );
 }
 
-function defineShip($length, $row, $start)
+/**
+ * @param int $length
+ * @param string $start a0...h7
+ * @param string $axis
+ * @return bool
+ */
+function defineShip(int $length, string $start, string $axis = 'x')
 {
     global $state;
-    $shipL = $state['grid'][$row][$start + $length];
-    foreach($shipL as $item) {
-        if($item != 0) {
-            return false;
-        }
-    }
+    $startRow = $start[0];
+    $axis = $axis === 'x' ? true : false;
 
-    $i = $start;
-    DEFINE_SHIP_START_LOOP:
-    $state['grid'][$row][$i] = 1;
-    $i++;
-    if($i <= $start + $length) goto DEFINE_SHIP_START_LOOP;
+    if($axis) {
+        $len = $state['grid'][$startRow][$start[1] + $length];
+
+        foreach ($len as $item) {
+            if ($item != 0) {
+                return false;
+            }
+        }
+
+        $i = $start;
+        DEFINE_SHIP_X_START_LOOP:
+        $state['grid'][$len][$i] = 1;
+        $i++;
+        if ($i <= $start + $length) goto DEFINE_SHIP_X_START_LOOP;
+    } else {
+        // @TODO Implement Y axis
+    }
 
 }
