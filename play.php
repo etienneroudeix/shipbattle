@@ -8,6 +8,16 @@ require __DIR__ . "/vendor/autoload.php";
 
 $state = [
     'ships' => [],
+    'grid' => [
+        'A' => [0,0,0,0,0,0,0,0],
+        'B' => [0,0,0,0,0,0,0,0],
+        'C' => [0,0,0,0,0,0,0,0],
+        'D' => [0,0,0,0,0,0,0,0],
+        'E' => [0,0,0,0,0,0,0,0],
+        'F' => [0,0,0,0,0,0,0,0],
+        'G' => [0,0,0,0,0,0,0,0],
+        'H' => [0,0,0,0,0,0,0,0],
+    ],
     'ships_ok' => false,
 ];
 
@@ -67,11 +77,11 @@ function connect(Client $client)
                 if (!$state['ships_ok']) {
                     echo "Please define your ships !" . PHP_EOL;
 
-                    defineShip(5);
-                    defineShip(4);
-                    defineShip(3);
-                    defineShip(3);
-                    defineShip(2);
+                    defineShip(5, 'A', 1);
+                    defineShip(4, 'B', 3);
+                    defineShip(3, 'E', 5);
+                    defineShip(3, 'H', 2);
+                    defineShip(2, 'C', 1);
 
                     $state['ships_ok'] = true;
                 }
@@ -89,7 +99,20 @@ function connect(Client $client)
         );
 }
 
-function defineShip($length)
+function defineShip($length, $row, $start)
 {
-    // TODO
+    global $state;
+    $shipL = $state['grid'][$row][$start + $length];
+    foreach($shipL as $item) {
+        if($item != 0) {
+            return false;
+        }
+    }
+
+    $i = $start;
+    DEFINE_SHIP_START_LOOP:
+    $state['grid'][$row][$i] = 1;
+    $i++;
+    if($i <= $start + $length) goto DEFINE_SHIP_START_LOOP;
+
 }
