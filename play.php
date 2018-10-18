@@ -2,6 +2,7 @@
 
 use EventLoop\EventLoop;
 use Rx\Scheduler\EventLoopScheduler;
+use Rx\Websocket\Client;
 
 require __DIR__ . "/vendor/autoload.php";
 
@@ -14,34 +15,8 @@ $ip = getIp();
 
 echo "Waiting for other player ..." . PHP_EOL;
 
-$client = new \Rx\Websocket\Client('ws://' . $ip);
-$client
-    ->retry()
-    ->subscribe(
-    function (\Rx\Websocket\MessageSubject $ms) {
-        echo "Your friend is here !" . PHP_EOL;
-
-        $ms->subscribe(
-            function ($message) {
-                echo $message . "\n";
-            }
-        );
-
-        defineShip(5);
-        defineShip(4);
-        defineShip(3);
-        defineShip(3);
-        defineShip(2);
-
-        //$ms->onNext('Hello');
-    },
-    function ($error) {
-        echo "Could not connect" . PHP_EOL;
-    },
-    function () {
-        echo "ended connection" . PHP_EOL;
-    }
-);
+$client = new Client('ws://' . $ip);
+connect($client);
 
 /* FUNCTIONS */
 function getIp()
@@ -66,6 +41,39 @@ function startServer() {
     $server->subscribe(function (\Rx\Websocket\MessageSubject $cs) {
         $cs->subscribe($cs);
     });
+}
+
+function connect(Client $client)
+{
+    $client
+        ->retry()
+        ->subscribe(
+            function (\Rx\Websocket\MessageSubject $ms) {
+                echo "Your friend is here !" . PHP_EOL;
+
+                $ms->subscribe(
+                    function ($message) {
+                        echo $message . "\n";
+                    }
+                );
+
+                defineShip(5);
+                defineShip(4);
+                defineShip(3);
+                defineShip(3);
+                defineShip(2);
+
+                //$ms->onNext('Hello');
+            },
+            function ($error) {
+                echo "Could not connect" . PHP_EOL;
+            },
+            function () use ($client) {
+                echo "Your friend is gone. Trying to reconnect..." . PHP_EOL;
+                connect($client);
+
+            }
+        );
 }
 
 function defineShip($length)
