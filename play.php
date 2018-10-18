@@ -93,3 +93,5 @@ function defineShip($length)
 {
     // TODO
 }
+
+$loop->run();
