@@ -6,6 +6,11 @@ use Rx\Websocket\Client;
 
 require __DIR__ . "/vendor/autoload.php";
 
+$state = [
+    'ships' => [],
+    'ships_ok' => false,
+];
+
 $loop = EventLoop::getLoop();
 $scheduler = new EventLoopScheduler($loop);
 
@@ -49,6 +54,8 @@ function connect(Client $client)
         ->retry()
         ->subscribe(
             function (\Rx\Websocket\MessageSubject $ms) {
+                global $state;
+
                 echo "Your friend is here !" . PHP_EOL;
 
                 $ms->subscribe(
@@ -57,11 +64,17 @@ function connect(Client $client)
                     }
                 );
 
-                defineShip(5);
-                defineShip(4);
-                defineShip(3);
-                defineShip(3);
-                defineShip(2);
+                if (!$state['ships_ok']) {
+                    echo "Please define your ships !" . PHP_EOL;
+
+                    defineShip(5);
+                    defineShip(4);
+                    defineShip(3);
+                    defineShip(3);
+                    defineShip(2);
+
+                    $state['ships_ok'] = true;
+                }
 
                 //$ms->onNext('Hello');
             },
