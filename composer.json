@@ -1,0 +1,8 @@
+{
+    "name": "etienne/shipbattle",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "rx/websocket": "^2.1"
+    }
+}
