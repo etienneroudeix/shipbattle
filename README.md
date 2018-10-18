@@ -52,6 +52,6 @@ The game prompts the winner and exits.
 
 - [ ] increase board size
 
- [ ] share ocean
+- [ ] share ocean
 
 - [ ] improve player number
