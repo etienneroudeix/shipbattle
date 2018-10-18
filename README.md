@@ -11,7 +11,7 @@ A ship battle game based on a  wide sharded ocean. Ships can move.
 
 ## Board
 
-The board is a 8x8 square. Columns are called from A to P. Raws are called from 0 to 15.
+The board is a 8x8 square. Columns are called from A to H. Raws are called from 0 to 7.
 
 ## Set Up
 
