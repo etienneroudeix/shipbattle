@@ -1,6 +1,10 @@
 # Ship Battle
 Best ship battle ever
 
+## WARNING
+
+This is very important to me that this project stays a single php file code.
+
 ## Abstract
 
 A ship battle game based on a  wide sharded ocean. Ships can move.
