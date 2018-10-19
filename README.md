@@ -2,8 +2,10 @@
 Best ship battle ever
 
 ## WARNING
-
+:trollface: :trollface: :trollface: 
 This is very important to me that this project stays a single php file code.
+This project must use as much `global` variables and `goto` instructions as possible.
+:trollface: :trollface: :trollface: 
 
 ## Abstract
 
