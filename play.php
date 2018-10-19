@@ -23,12 +23,16 @@
 use EventLoop\EventLoop;
 use Rx\Scheduler\EventLoopScheduler;
 use Rx\Websocket\Client;
+use Rx\Websocket\MessageSubject;
 
 require __DIR__ . "/vendor/autoload.php";
 
 $state = [
     'ships' => [],
     'ships_ok' => false,
+    'i_am_first_player' => false,
+    'first_player_ok' => false,
+    'adversary_shifumi_choice' => null,
 ];
 
 $loop = EventLoop::getLoop();
@@ -67,7 +71,21 @@ function startServer() {
     $server = new \Rx\Websocket\Server('0.0.0.0:' . $port);
 
     $server->subscribe(function (\Rx\Websocket\MessageSubject $cs) {
-        $cs->subscribe($cs);
+        $cs->subscribe(function ($message) {
+            global $state;
+
+            //echo $message . PHP_EOL;
+
+            $content = explode('|', $message);
+
+            // NO ERROR MGT FOOL !
+
+            switch ($content[0]) {
+                case 'shifumi':
+                    $state['adversary_shifumi_choice'] = $content[1];
+                    break;
+            }
+        });
     });
 }
 
@@ -90,14 +108,25 @@ function connect(Client $client)
                 if (!$state['ships_ok']) {
                     echo "Please define your ships !" . PHP_EOL;
 
-                    defineShip($state['ships'], 5);
-                    defineShip($state['ships'], 4);
-                    defineShip($state['ships'], 3);
-                    defineShip($state['ships'], 3);
-                    defineShip($state['ships'], 2);
+                    //defineShip($state['ships'], 5);
+                    //defineShip($state['ships'], 4);
+                    //defineShip($state['ships'], 3);
+                    //defineShip($state['ships'], 3);
+                    //defineShip($state['ships'], 2);
 
                     $state['ships_ok'] = true;
                 }
+
+                if (!$state['first_player_ok']) {
+                    echo "We need a first player ! Let's go shifumi !" . PHP_EOL;
+
+                    shifumi($ms);
+
+                    $state['i_am_first_player'] = true;
+                }
+
+                echo "Ready to battle !" . PHP_EOL;
+
 
                 //$ms->onNext('Hello');
             },
@@ -184,6 +213,49 @@ function read($prompt)
     foreach ($x as $rr) {}
 
     return $res;
+}
+
+function shifumi(MessageSubject $ms)
+{
+    global $state;
+
+    GET_CHOICE:
+    $choice = read("Make your choice [rock|paper|scissor] : ");
+    if (!in_array($choice, ['rock', 'paper', 'scissor'])) goto GET_CHOICE;
+
+    $ms->onNext('shifumi|' . $choice);
+
+    $x = \Rx\await(\Rx\Observable::of(null)->map(function () use (&$state) {
+        if($state['adversary_shifumi_choice'] === null) throw new \Exception('rte');
+    })->retry());
+
+    foreach ($x as $rr) {}
+
+    echo "You picked `$choice` and you oponent picked `{$state['adversary_shifumi_choice']}`" . PHP_EOL;
+
+    if ($choice === $state['adversary_shifumi_choice']) {
+        echo "It's a draw game, play again ..." . PHP_EOL;
+        $state['adversary_shifumi_choice'] = null;
+        shifumi($ms);
+        return;
+    }
+
+    if (
+        $choice === 'rock' && $state['adversary_shifumi_choice'] === 'paper' ||
+        $choice === 'paper' && $state['adversary_shifumi_choice'] === 'scissor' ||
+        $choice === 'scissor' && $state['adversary_shifumi_choice'] === 'rock'
+    ) {
+        echo "You lose." . PHP_EOL;
+        $state['i_am_first_player'] = false;
+        $state['first_player_ok'] = true;
+        return;
+    }
+
+    echo "You won !" . PHP_EOL;
+    $state['i_am_first_player'] = true;
+    $state['first_player_ok'] = true;
+    return;
+
 }
 
 $loop->run();
