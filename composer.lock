@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6630dd8df0e6cc697c436a72b5b8f047",
+    "content-hash": "fe0e9585b99bf28d777111379c855134",
     "packages": [
         {
             "name": "evenement/evenement",
@@ -801,6 +801,59 @@
                 "uri"
             ],
             "time": "2018-01-15T21:00:49+00:00"
+        },
+        {
+            "name": "rx/await",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/RxPHP/RxAwait.git",
+                "reference": "f88edfbb99621c81eaa8dcd37558efdd220ec992"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/RxPHP/RxAwait/zipball/f88edfbb99621c81eaa8dcd37558efdd220ec992",
+                "reference": "f88edfbb99621c81eaa8dcd37558efdd220ec992",
+                "shasum": ""
+            },
+            "require": {
+                "reactivex/rxphp": "^2.0",
+                "voryx/event-loop": "^2.0 || ^3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Bonneau",
+                    "email": "matt@bonneau.net",
+                    "role": "Developer"
+                },
+                {
+                    "name": "David Dan",
+                    "email": "davidwdan@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Provides await functionality for RxPHP",
+            "keywords": [
+                "await",
+                "reactivex",
+                "reactphp",
+                "rx.php",
+                "rxphp"
+            ],
+            "time": "2018-04-18T02:34:20+00:00"
         },
         {
             "name": "rx/websocket",

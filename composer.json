@@ -3,6 +3,7 @@
     "type": "project",
     "license": "MIT",
     "require": {
-        "rx/websocket": "^2.1"
+        "rx/websocket": "^2.1",
+        "rx/await": "^2.1"
     }
 }

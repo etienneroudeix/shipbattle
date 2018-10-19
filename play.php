@@ -44,10 +44,11 @@ $client = new Client('ws://' . $ip);
 connect($client);
 
 /* FUNCTIONS */
+
 function getIp()
 {
     GET_IP:
-    $ip = readline("Please enter other player address [ip:port] : ");
+    $ip = read("Please enter other player address [ip:port] : ");
     $check = explode(':', $ip);
     if (count($check) < 2) goto GET_IP;
     if (!filter_var($check[0], FILTER_VALIDATE_IP)) goto GET_IP;
@@ -57,11 +58,13 @@ function getIp()
 }
 
 function startServer() {
+    global $loop;
+
     GET_PORT:
-    $port = readline("Which port would you like to open to your friend : ");
+    $port = read("Which port would you like to open to your friend : ");
     if (!filter_var($port, FILTER_VALIDATE_INT)) goto GET_PORT;
 
-    $server = new \Rx\Websocket\Server('127.0.0.1:' . $port);
+    $server = new \Rx\Websocket\Server('0.0.0.0:' . $port);
 
     $server->subscribe(function (\Rx\Websocket\MessageSubject $cs) {
         $cs->subscribe($cs);
@@ -114,19 +117,19 @@ function defineShip(array &$state, $length)
     echo "Place your $length long ship" . PHP_EOL;
 
     GET_START_X:
-    $sx = readline("Git column for ship start position [A-H] : ");
+    $sx = read("Git column for ship start position [A-H] : ");
     if (!strlen($sx)===1 || !in_array($sx, range('A', 'H'))) goto GET_START_X;
 
     GET_START_Y:
-    $sy = readline("Git raw for ship start position [0-7] : ");
+    $sy = read("Git raw for ship start position [0-7] : ");
     if (!strlen($sy)===1 || !in_array($sy, range(0, 7))) goto GET_START_Y;
 
     GET_END_X:
-    $ex = readline("Git column for ship start position [A-H] : ");
+    $ex = read("Git column for ship start position [A-H] : ");
     if (!strlen($ex)===1 || !in_array($ex, range('A', 'H'))) goto GET_END_X;
 
     GET_END_Y:
-    $ey = readline("Git raw for ship start position [0-7] : ");
+    $ey = read("Git raw for ship start position [0-7] : ");
     if (!strlen($ey)===1 || !in_array($ey, range(0, 7))) goto GET_END_Y;
 
     // check axis
@@ -152,6 +155,35 @@ function defineShip(array &$state, $length)
     echo "Nice ship !" . PHP_EOL;
 
     // todo save in $state
+}
+
+function read($prompt)
+{
+    global $loop;
+
+    $res = null;
+    readline_callback_handler_install(
+        $prompt,
+        function ($mes) use (&$res) {
+            global $loop;
+
+            echo $mes . PHP_EOL;
+            $res = $mes;
+
+            readline_callback_handler_remove();
+            $loop->removeReadStream(STDIN);
+        }
+    );
+    $loop->addReadStream(STDIN, function() {
+        readline_callback_read_char();
+    });
+    $x = \Rx\await(\Rx\Observable::of(null)->map(function () use (&$res) {
+        if($res === null) throw new \Exception('rte');
+    })->retry());
+
+    foreach ($x as $rr) {}
+
+    return $res;
 }
 
 $loop->run();
